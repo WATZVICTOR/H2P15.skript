@@ -1,0 +1,131 @@
+
+#██╗███╗   ██╗███████╗███████╗ ██████╗ ██████╗██╗ ██████╗ ███╗   ██╗
+#██║████╗  ██║██╔════╝██╔════╝██╔════╝██╔════╝██║██╔═══██╗████╗  ██║
+#██║██╔██╗ ██║█████╗  █████╗  ██║     ██║     ██║██║   ██║██╔██╗ ██║
+#██║██║╚██╗██║██╔══╝  ██╔══╝  ██║     ██║     ██║██║   ██║██║╚██╗██║
+#██║██║ ╚████║██║     ███████╗╚██████╗╚██████╗██║╚██████╔╝██║ ╚████║
+#╚═╝╚═╝  ╚═══╝╚═╝     ╚══════╝ ╚═════╝ ╚═════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝ --> H2P15.sk
+
+#Credits
+#written by Nazsgull for k3vlar-craft
+
+#Special thanks to
+
+#  ╔╦╗┌─┐┌─┐┌┬┐ ╔═╗┬ ┬┌┐┌ ╔═╗┬ ┬┬ ┬     
+#  ║║║│ │└─┐ │  ╠╣ │ ││││ ║ ╦│ │└┬┘
+#  ╩ ╩└─┘└─┘ ┴  ╚  └─┘┘└┘ ╚═╝└─┘ ┴ 
+
+# ╔╦╗┬ ┬┌─┐╔═╗┌─┐┌─┐┬  ╔═╗┬ ┬┬ ┬       ╔╦╗┬┌┐┌┌─┐┌─┐┬─┐┌─┐┌─┐┌┬┐
+#  ║ ├─┤├┤ ║  │ ││ ││  ║ ╦│ │└┬┘       ║║║││││├┤ │  ├┬┘├─┤├┤  │ 
+#  ╩ ┴ ┴└─┘╚═╝└─┘└─┘┴─┘╚═╝└─┘ ┴123─────╩ ╩┴┘└┘└─┘└─┘┴└─┴ ┴└   ┴ 
+
+#  ╦ ╦┌┐┌┌┬┐┬ ┬┌─┐┌┬┐┌─┐┌┐ ┬  ┌─┐
+#  ║ ║│││ │││ │└─┐ │ ├4┤├┴┐│  ├┤ 
+#  ╚═╝┘└┘─┴┘└─┘└─┘ ┴ ┴ ┴└─┘┴─┘└─┘
+
+# from http://dev.bukkit.org/bukkit-plugins/skript/forum/
+
+
+#The Skript starts HERE
+
+
+
+command /inf:
+description: starts the global infection.
+usage: /inf
+executable by: players and console
+trigger:
+    set {pandemia} to true
+    set {world.inf} to command sender's world
+    loop all players in world {world.inf}
+        every 800 seconds:
+            if {infectado.%looped-player%} is set:
+                set {inf.phase.%looped-player%} to {inf.phase.%looped-player%} + 1
+
+loop all players
+    if {inf.phase.%looped-player%}=1
+#------------
+
+#infección-inicio
+on death of player:
+	if {infectado.%player%} is set:
+		set {infectado.%player%} to false
+	
+on damage:
+	attacker is a zombie
+	victim is a player
+	chance of 50%:
+		remove victim from {humanos::estado}
+		add victim to {infectados::estado}
+		send "&c&kO&r&2&l¡Un zombi te ha infectado del virus H2P15!&c&kO" to victim
+		send "&3Cúrate para evitar la enfermedad...¿&ro no&3?" to victim
+		wait 300 seconds
+		send "&3Tu carga vírica ha aumentado lo suficiente como para infectar a otras personas" to victim
+		
+		set {infectado.%victim%} to 1
+		
+on damage:
+	victim is a player
+	attacker is a player
+	if {infectado.%attacker%} is set: # Means you got infected by player
+		chance of 20%:
+			remove victim from {humanos::estado}
+			add victim to {infectados::estado}
+			set {ninfectados.%attacker%} to {ninfectados.%attacker%}+1
+			send "&c&kO&r&2&l¡%attacker% te ha infectado del virus H2P15!&c&kO" to victim
+			send "&3Cúrate para evitar la enfermedad...¿&ro no&3?" to victim
+			send "&c&kO&r&2&l¡Has infectado a %victim%, y has conseguido más vida!" to attacker
+			
+			set {infectado.%victim%} to 1
+			send "&aYou got infected by %attacker%." to victim
+			send "&aEmpieza la &nFASE I&r&a. Sientes intensos picores en la herida." to victim
+			
+			wait 20 seconds
+			chance of 33%:
+				apply potion of nausea to victim for 10 seconds
+				chance of 50%:
+					send "&ko&r&aUno de los síntomas de la &nFASE I&r es el mareo. &ko&r" to victim
+				chance of 50%:
+					send "&ko&r&aLa cabeza me da vueltas. Según la OMS, esto es síntoma de la &nFASE 1&r&a del virus." to victim
+			chance of 33%:
+				apply potion of slowness 1 to victim for 10 seconds
+				send "&ko&r&aEl cansancio es síntoma de la &nFASE I&r del virus. &ko&r" to victim
+			chance of 33%:
+				apply potion of weakness to {inf_} for 30 seconds
+				send "&ko&r&aLa debilidad es un síntoma de la &nFASE I&r del virus. &ko&r" to victim
+			chance of 1%:
+				apply potion of regeneration 1 to victim for 60 seconds
+				set {infectado.%victim%} to false
+				remove player from {infectados::estado}
+				add player to {humanos::estado}
+				send "&ko&r&aUn raro fenómeno de la &nFASE I&r de la infección provoca la autodestrucción del patógeno ,la regeneración progresiva de los tejidos dañados y por tanto la cura de la propia enfermedad.&r&ko&r&a"
+				
+			wait 20 seconds
+			chance of 33%:
+				apply potion of nausea to victim for 10 seconds
+				chance of 50%:
+					send "&ko&r&aUno de los síntomas de la &nFASE I&r es el mareo. &ko&r" to victim
+				chance of 50%:
+					send "&ko&r&aLa cabeza me da vueltas. Según la OMS, esto es síntoma de la &nFASE 1&r&a del virus." to victim
+			chance of 33%:
+				apply potion of slowness 1 to victim for 10 seconds
+				send "&ko&r&aEl cansancio es síntoma de la &nFASE I&r del virus. &ko&r" to victim
+			chance of 33%:
+				apply potion of weakness to {inf_} for 30 seconds
+				send "&ko&r&aLa debilidad es un síntoma de la &nFASE I&r del virus. &ko&r" to victim
+			chance of 1%:
+				apply potion of regeneration 1 to victim for 60 seconds
+				set {infectado.%victim%} to false
+				remove player from {infectados::estado}
+				add player to {humanos::estado}
+				send "&ko&r&aUn raro fenómeno de la &nFASE I&r de la infección provoca la autodestrucción del patógeno ,la regeneración progresiva de los tejidos dañados y por tanto la cura de la propia enfermedad.&r&ko&r&a"
+#----------------
+			wait 10 seconds # Or any timespan you want, like 1 hour or 23.2 minutes
+			set {infectado.%victim%} to 2
+			send "Phase II begins. Your infected wound hurts even more."
+			wait 20 seconds
+			set {infectado.%victim%} to 3
+			send "Phase III begins. Your skin rots and vision blurs."
+			wait 13 seconds
+			send "Phase IV begins. You are corrupting.."
+			set {infectado.%victim%} to 4
