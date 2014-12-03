@@ -119,7 +119,7 @@ on damage:
 				remove player from {infectados::estado}
 				add player to {humanos::estado}
 				send "&ko&r&aUn raro fenómeno de la &nFASE I&r de la infección provoca la autodestrucción del patógeno ,la regeneración progresiva de los tejidos dañados y por tanto la cura de la propia enfermedad.&r&ko&r&a"
-#----------------
+#Comenatrios----------------
 			wait 10 seconds # Or any timespan you want, like 1 hour or 23.2 minutes
 			set {infectado.%victim%} to 2
 			send "Phase II begins. Your infected wound hurts even more."
